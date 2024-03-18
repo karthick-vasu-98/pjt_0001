@@ -12,15 +12,13 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 import os
 import sys
-import environ
+from decouple import config as env
 import logging
 import logging.config
 from pathlib import Path
 from django.utils.translation import gettext_lazy as _
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-env = environ.Env(DEBUG=(bool, True))
-environ.Env.read_env()
 ENVIRONMENT = env('APP_ENVIRONMENT')
 VERSION = env('APP_VERSION')
 SECRET_KEY = 'django-insecure-23jsu*au-5g6%=68qnxqqlsen3hvc=!h^sxw*c08lm0^-4rqq&'
@@ -156,6 +154,16 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'service_application.account_manager',
+    'service_application.auth_manager',
+    'service_application.common_console',
+    'service_application.corporate_console',
+    'service_application.customer_manager',
+    'service_application.individual_console',
+    'service_application.master_manager',
+    'service_application.notification_manager',
+    'service_application.property_manager',
+    'service_application.service_manager'
 ]
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -210,7 +218,7 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_URL = env('MEDIA_URL')
+# MEDIA_URL = env('MEDIA_URL')
 FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440
 DATA_UPLOAD_MAX_MEMORY_SIZE = 2621440
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 1000
@@ -255,7 +263,7 @@ X_FRAME_OPTIONS = "DENY"
 USE_X_FORWARDED_HOST = False
 USE_X_FORWARDED_PORT = False
 STATIC_ROOT = os.path.join(BASE_DIR, 'media','static_data')
-STATIC_URL = env('STATIC_URL')
+# STATIC_URL = env('STATIC_URL')
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 STATICFILES_DIRS = [
     os.path.join(STATIC_ROOT, 'css/'),
