@@ -97,7 +97,15 @@ class Property(models.Model):
     zipcode = models.CharField(max_length=8, null=True, blank=True)
     preferred_location_tag = models.CharField(max_length=255, null=True, blank=True)
     lat = models.FloatField(null=True, blank=True)
-    display_status = models.CharField(max_length=32, default='DRAFT', choices=gv.PROPERTY_STATUS)
+    property_price = models.FloatField(null=True, blank=True)
+    property_display_price = models.FloatField(null=True, blank=True)
+    is_featured = models.BooleanField(default=False)
+    is_company_property = models.BooleanField(default=False)
+    verified_by = models.CharField(max_length=255, null=True, blank=True)
+    verified_on = models.DateTimeField(null=True, blank=True)
+    property_verification_status = models.CharField(max_length=32, default='INPROCESS', choices=gv.PROPERTY_VERIFICATION_STATUS)
+    property_status = models.CharField(max_length=32, default='DRAFT', choices=gv.PROPERTY_STATUS)
+    display_status = models.CharField(max_length=32, default='DRAFT', choices=gv.PROPERTY_DISPLAY_STATUS)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     created_by = models.CharField(max_length=8)
@@ -171,3 +179,43 @@ class PropertySpecification(models.Model):
 
     def __str__(self):
         return "{0}".format(self.property.code)
+
+
+class PropertyMasterDocumentType(models.Model):
+    code = models.CharField(max_length=255, null=True, blank=True)
+    name = models.CharField(max_length=255, null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+    created_by = models.CharField(max_length=8)
+    updated_by = models.CharField(max_length=8)
+    datamode = models.CharField(max_length=1, default='A', choices=gv.DATAMODE_CHOICES)
+
+    def __str__(self):
+        return "{0}".format(self.name)
+
+    def save(self, *args, **kwargs):
+        super(PropertyMasterDocumentType, self).save(*args, **kwargs)
+        if not self.code or self.code =="":
+            self.code = "PROPERTY-DOCUMENT-TYPE-"+"-"+"%04d"%(self.id)
+            super(PropertyMasterDocumentType, self).save()
+            
+    class Meta:
+        db_table = 'master_property_document_type'
+
+
+class PropertyDocument(models.Model):
+    property = models.ForeignKey(Property, null=True, blank=True, on_delete=models.CASCADE)
+    document_url = models.CharField(max_length=255, null=True, blank=True)
+    is_verified = models.BooleanField(default=False)
+    verified_by = models.CharField(max_length=255, null=True, blank=True)
+    verified_on = models.DateTimeField(null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+    created_by = models.CharField(max_length=8)
+    updated_by = models.CharField(max_length=8)
+    datamode = models.CharField(max_length=1, default='A', choices=gv.DATAMODE_CHOICES)
+
+    def __str__(self):
+        return "{0}".format(self.property.code)
+
+
