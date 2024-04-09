@@ -99,10 +99,13 @@ class Property(models.Model):
     lat = models.FloatField(null=True, blank=True)
     property_price = models.FloatField(null=True, blank=True)
     property_display_price = models.FloatField(null=True, blank=True)
+    is_negotiable = models.BooleanField(default=False)
     is_featured = models.BooleanField(default=False)
     is_company_property = models.BooleanField(default=False)
     verified_by = models.CharField(max_length=255, null=True, blank=True)
     verified_on = models.DateTimeField(null=True, blank=True)
+    total_customer_viewed = models.IntegerField(default=0)
+    total_time_spent = models.FloatField(null=True, blank=True)
     property_verification_status = models.CharField(max_length=32, default='INPROCESS', choices=gv.PROPERTY_VERIFICATION_STATUS)
     property_status = models.CharField(max_length=32, default='DRAFT', choices=gv.PROPERTY_STATUS)
     display_status = models.CharField(max_length=32, default='DRAFT', choices=gv.PROPERTY_DISPLAY_STATUS)
@@ -204,11 +207,70 @@ class PropertyMasterDocumentType(models.Model):
 
 
 class PropertyDocument(models.Model):
+    document_id = models.CharField(max_length=255, null=True, blank=True, unique=True, db_index=True)
     property = models.ForeignKey(Property, null=True, blank=True, on_delete=models.CASCADE)
     document_url = models.CharField(max_length=255, null=True, blank=True)
     is_verified = models.BooleanField(default=False)
+    can_show = models.BooleanField(default=False)
     verified_by = models.CharField(max_length=255, null=True, blank=True)
     verified_on = models.DateTimeField(null=True, blank=True)
+    document_date = models.DateField(null=True, blank=True)
+    total_amount_generated = models.IntegerField(default=0)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+    created_by = models.CharField(max_length=8)
+    updated_by = models.CharField(max_length=8)
+    datamode = models.CharField(max_length=1, default='A', choices=gv.DATAMODE_CHOICES)
+
+    def __str__(self):
+        return "{0}".format(self.property.code)
+
+    def save(self, *args, **kwargs):
+        super(PropertyDocument, self).save(*args, **kwargs)
+        if not self.code or self.code =="":
+            self.code = "PROPERTY-DOCUMENT-TYPE-"+"-"+"%04d"%(self.id)
+            super(PropertyDocument, self).save()
+            
+    class Meta:
+        db_table = 'property_document'
+
+
+class CustomerPropertyDocumentMapping(models.Model):
+    customer_id = models.CharField(max_length=255, null=True, blank=True)
+    document = models.ForeignKey(PropertyDocument, null=True, blank=True, on_delete=models.CASCADE)
+    payment_status = models.CharField(max_length=32, default='NOT_PAID', choices=gv.DOCUMENT_PAYMENT_STATUS)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+    created_by = models.CharField(max_length=8)
+    updated_by = models.CharField(max_length=8)
+    datamode = models.CharField(max_length=1, default='A', choices=gv.DATAMODE_CHOICES)
+
+    def __str__(self):
+        return "{0}".format(self.document.property.code)
+    
+    class Meta:
+        db_table = 'customer_property_document_mapping'
+
+
+class CustomerViewedProperty(models.Model):
+    customer_id = models.CharField(max_length=255, null=True, blank=True)
+    property_id = models.CharField(max_length=255, null=True, blank=True)
+    session_time = models.FloatField(null=True, blank=True)
+    created_on = models.DateTimeField(auto_now_add=True)
+    updated_on = models.DateTimeField(auto_now=True)
+    created_by = models.CharField(max_length=8)
+    updated_by = models.CharField(max_length=8)
+    datamode = models.CharField(max_length=1, default='A', choices=gv.DATAMODE_CHOICES)
+
+    def __str__(self):
+        return "{0}".format(self.property_id)
+
+
+class PropertyPOC(models.Model):
+    property = models.ForeignKey(Property, null=True, blank=True, on_delete=models.CASCADE)
+    poc_name = models.CharField(max_length=255, null=True, blank=True)
+    poc_mobile_number = PhoneNumberField(null=True, blank=True)
+    poc_email = models.EmailField(null=True, blank=True)
     created_on = models.DateTimeField(auto_now_add=True)
     updated_on = models.DateTimeField(auto_now=True)
     created_by = models.CharField(max_length=8)

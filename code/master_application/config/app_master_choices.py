@@ -51,3 +51,4 @@ IMAGE_REPO_FOLDER = 'dynamic_data/ir'
 FILE_REPO_FOLDER = 'dynamic_data/fr'
 ACCOUNT_CONTACT_LEVEL_CHOICES = (("PRIMARY", "Primary"),("SECONDARY","Secondary"))
 DATA_TYPE_CHOICES = (('INTEGER', 'Integer'), ('TEXT', 'Text'), ('FLOAT', 'Float'), ('BOOLEAN', 'Boolean'))
+DOCUMENT_PAYMENT_STATUS = (('PAID', 'Paid'), ('NOT_PAID', 'Not Paid'), ('INPROCESS', 'Inprocess'))
