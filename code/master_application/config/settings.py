@@ -154,6 +154,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_extensions',
     'service_application.account_manager',
     'service_application.auth_manager',
     'service_application.common_console',
@@ -217,6 +218,58 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
+APP_LOGGER_FUNCTION_IN_PARAMS = env('APP_LOGGER_FUNCTION_IN_PARAMS')
+APP_LOGGER_FUNCTION_OUT_PARAMS = env('APP_LOGGER_FUNCTION_OUT_PARAMS')
+APP_LOGGING_LEVEL = env('APP_LOGGING_LEVEL')
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        #'verbose': {'format': '%(levelname)s %(asctime)s %(module)s %(process)d %(message)s'},
+        'verbose': {'format': '%(asctime)s %(levelname)s %(message)s'},
+        'simple':  {'format': '%(levelname)s %(message)s'},
+    },
+    'handlers': {
+        'app_scripts':{
+            'level':env('APP_LOGGING_LEVEL'),
+            'class':'logging.handlers.TimedRotatingFileHandler',
+            'formatter': 'verbose',
+            'filename': os.path.join(BASE_DIR, 'logs', 'app_scripts.log'),
+            'when': 'W4',
+            'interval': 1,
+            'backupCount': 7
+        },
+        'app':{
+            'level':env('APP_LOGGING_LEVEL'),
+            'class':'logging.handlers.TimedRotatingFileHandler',
+            'formatter': 'verbose',
+            'filename': os.path.join(BASE_DIR, 'logs', 'app.log'),
+            'when': 'W4',
+            'interval': 1,
+            'backupCount': 7
+        },
+        'app_threads':{
+            'level':env('APP_LOGGING_LEVEL'),
+            'class':'logging.handlers.TimedRotatingFileHandler',
+            'formatter': 'verbose',
+            'filename': os.path.join(BASE_DIR, 'logs', 'app_threads.log'),
+            'when': 'W4',
+            'interval': 1,
+            'backupCount': 7
+        },
+
+
+    },
+    'loggers': {
+        'app_scripts':{'handlers':['app_scripts'],'level': env('APP_LOGGING_LEVEL'),'propagate': False,},
+        'app':{'handlers':['app'],'level': env('APP_LOGGING_LEVEL'),'propagate': False,},
+        'app_threads':{'handlers':['app_threads'],'level': env('APP_LOGGING_LEVEL'),'propagate': False,},
+
+    }
+}
+logging.config.dictConfig(LOGGING)
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # MEDIA_URL = env('MEDIA_URL')
 FILE_UPLOAD_MAX_MEMORY_SIZE = 2621440
@@ -263,7 +316,7 @@ X_FRAME_OPTIONS = "DENY"
 USE_X_FORWARDED_HOST = False
 USE_X_FORWARDED_PORT = False
 STATIC_ROOT = os.path.join(BASE_DIR, 'media','static_data')
-# STATIC_URL = env('STATIC_URL')
+STATIC_URL = env('STATIC_URL')
 STATICFILES_STORAGE = "django.contrib.staticfiles.storage.StaticFilesStorage"
 STATICFILES_DIRS = [
     os.path.join(STATIC_ROOT, 'css/'),
