@@ -49,3 +49,4 @@ ACCOUNT_USER_STATUS_CHOICES =  (("ACTIVE", "Active"),("INACTIVE", "Inactive"),("
 IMAGE_REPO_FOLDER = 'dynamic_data/ir'
 FILE_REPO_FOLDER = 'dynamic_data/fr'
 ACCOUNT_CONTACT_LEVEL_CHOICES = (("PRIMARY", "Primary"),("SECONDARY","Secondary"))
+DATA_TYPE_CHOICES = (('INTEGER', 'Integer'), ('TEXT', 'Text'), ('FLOAT', 'Float'), ('BOOLEAN', 'Boolean'))
